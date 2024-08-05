@@ -1,21 +1,14 @@
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class fashionShop{
+public class convertFashionshop{
 	private static final AtomicInteger counter = new AtomicInteger(0);
-	public static  String[] ID = new String[0];
-	public static  String[] PHONENUMBER = new String[0];
-	public static  String[] SIZE = new String[0];
-	public static  int[] QUANTITY = new int[0];
-	public static  double[] AMOUNT = new double[0];
-	public static final String[] sizes = {"XS", "S", "M", "L", "XL", "XXL"};
-	public static int[] STATUS = new int[0];
+	static Order[] orders = new Order[0];
 	public static final int PROCESSING = 0;
 	public static final int DELIVERING = 1;
 	public static final int DELIVERED = 2;
 
-	
-	public final static void clearConsole() {
+public final static void clearConsole() {
 		try {
 			final String os = System.getProperty("os.name");
 			if (os.contains("Windows")) {
@@ -39,12 +32,10 @@ public class fashionShop{
         return " ".repeat(leftPadding) + text + " ".repeat(rightPadding);
     }
     
-
 	public static void main(String[] args){
 		home();
 		
 	}
-		
 	public static void home(){
 		System.out.println("\n\n");
 		System.out.println("\t\t\t  /$$$$$$$$                 /$$       /$$                            /$$$$$$  /$$");                          
@@ -68,7 +59,7 @@ public class fashionShop{
 		System.out.println("\t\t\t\t[6] Delete Order\n");
 		goOption();
 
-		}
+	}
 	public static void goOption(){
 		Scanner input = new Scanner(System.in);
 		System.out.print("\t\tInput Option :");
@@ -83,7 +74,7 @@ public class fashionShop{
 			case 6: clearConsole();deleteOrder(); break;
 			default:System.out.println("Invalid input");break;
 			}
-		}
+	}
 	public static String generateOrderID() {
         int id = counter.getAndIncrement();
         return String.format("ODR#%05d", id);
@@ -151,38 +142,20 @@ public class fashionShop{
 		}
 		return 0.0;
 	}
-	public static String[] createArrayString(String[] ar, String key){
+	public static Order[] extendObjectArray(Order order){
 		
-		String[] temp = new String[ar.length+1];
-		for (int i = 0; i < ar.length; i++){
-			temp[i]= ar[i];
-		}
-			ar=temp;
-			ar[ar.length-1]=key;
-		return ar;	
-			
-	}
-	public static int[] createArrayInt(int[] ar, int key){
-		int[] temp = new int[ar.length+1];
-		for (int i = 0; i < ar.length; i++){
-			temp[i]= ar[i];
-		}
-			ar=temp;
-			ar[ar.length-1]=key;
-			return ar;
-	}
-	public static double[] createArrayDouble(double[] ar, double key){
-		double[] temp = new double[ar.length+1];
-		for (int i = 0; i < ar.length; i++){
-			temp[i]= ar[i];
-		}
-			ar=temp;
-			ar[ar.length-1]=key;
-			return ar;
-	}
+			Order[] temp = new Order[orders.length+1];
+			for (int r = 0; r < orders.length; r++){
+				temp[r] = orders[r];
+			}
+			orders= temp;
+			orders[orders.length-1]=order;
+			return orders;
+		
+	} 
 	public static void placeOrder(){
-				do{
-					
+	
+		do{
 					System.out.println("\t\t\t _____  _                   ____          _        ");   
 					System.out.println("\t\t\t|  __ \\| |                 / __ \\        | |          ");
 					System.out.println("\t\t\t| |__) | | __ _  ___ ___  | |  | |_ __ __| | ___ _ __ ");
@@ -195,93 +168,93 @@ public class fashionShop{
 						
 						String Id = generateOrderID();
 						System.out.println("\t\t\tEnter Order Id : "+Id+"\n");
-						
+
 						String phoneNumber = enterPhoneNumber();
-						String size = enterSize();
-						int index =indexSizeArray(size);
-						int quantity=enterQty();
-						double Amount = searchValue(index);
-						double totalAmount =Amount*quantity;
-						System.out.println("\t\t\tAmount : "+totalAmount+"\n");
-						 
-						System.out.print("\t\t\tDo you want to place this order ? (y/n) : ");
-						char yesORno = input.next().charAt(0);
-						if(yesORno=='y'|| yesORno=='Y' ){
-							
-							ID = createArrayString(ID,Id);
-							PHONENUMBER = createArrayString(PHONENUMBER,phoneNumber);
-							SIZE = createArrayString(SIZE,size);
-							QUANTITY = createArrayInt(QUANTITY,quantity);
-							AMOUNT = createArrayDouble(AMOUNT,totalAmount);
-							STATUS = createArrayInt(STATUS,	PROCESSING);
-							System.out.println("\t\t\t\t Order Placed..!\n");
-							System.out.print("\t\t\tDo you want to place another order ? (y/n) : ");
-							
-								char yesorno = input.next().charAt(0);
-								if(yesorno=='y'|| yesorno=='Y' ){
+						if (phoneNumber.equals("Invalid Phone Number")){
+							System.out.print("\t\t\tDo you want to enter  phone number again ? (y/n) : ");
+							char yesORno = input.next().charAt(0);
+							if(yesORno=='y'|| yesORno=='Y' ){
+									counter.decrementAndGet();
+									clearConsole();
 									placeOrder();
-									
-								}else{
-									home();
-									}
-					
+								}
 						}else{
-							clearConsole();
-							counter.decrementAndGet();
-							placeOrder();
+							String size = enterSize();
+							int index =indexSizeArray(size);
+							int quantity=enterQty();
+							double Amount = searchValue(index);
+							double totalAmount =Amount*quantity;
+							int status = PROCESSING;
+							System.out.println("\t\t\tAmount : "+totalAmount+"\n");
+							 
+							System.out.print("\t\t\tDo you want to place this order ? (y/n) : ");
+							char yesORno = input.next().charAt(0);
+							if(yesORno=='y'|| yesORno=='Y' ){
+								
+								Order order = new Order(Id,phoneNumber,size,quantity,totalAmount,status);
+								Order[] or=extendObjectArray(order);
+								
+								System.out.println("\t\t\t\t Order Placed..!\n");
+								System.out.print("\t\t\tDo you want to place another order ? (y/n) : ");
+								
+									char yesorno = input.next().charAt(0);
+									if(yesorno=='y'|| yesorno=='Y' ){
+										clearConsole();
+										placeOrder();
+										
+									}else{
+										clearConsole();
+										home();
+										}
+						
+							}else{
+								clearConsole();
+								counter.decrementAndGet();
+								placeOrder();
+							}
 						}
-				} while (true);
-				
-	}
-		
-	public static int searchPhoneNumber(String phoneNumber){
 			
-			for (int i = 0; i < PHONENUMBER.length; i++){
-				
-				if(PHONENUMBER[i].equals(phoneNumber)){
-					return i;	
-				}	
-			}
-			return -1;	
+				} while (true);
 	}
 	
-    public static void getSearchCustomerDetails(String phoneNumber){
+	public static void getSearchCustomerDetails(String phoneNumber){
 		
 		int[] tempQTY = new int[6];
 		double[] tempAmount = new double[6];
 		String[] tempSize = {"XS","S","M","L","XL","XXL"};
 		
-		for (int i = 0; i < PHONENUMBER.length; i++){
-				if (PHONENUMBER[i].equals(phoneNumber)){
-					if (SIZE[i].equals("XS")){
+		for (int i = 0; i < orders.length; i++){
+			Order ar = orders[i];
+				if (ar.searchPhoneNumber(phoneNumber)){
+					if (ar.getSize().equals("XS")){
 						tempSize[0]="XS";
-						tempQTY[0]+=QUANTITY[i];
-						tempAmount[0]+=AMOUNT[i];
+						tempQTY[0]+=ar.getQty();
+						tempAmount[0]+=ar.getAmount();
 					}
-					else if(SIZE[i].equals("S")){
+					else if(ar.getSize().equals("S")){
 						tempSize[1]="S";
-						tempQTY[1]+=QUANTITY[i];
-						tempAmount[1]+=AMOUNT[i];
+						tempQTY[1]+=ar.getQty();
+						tempAmount[1]+=ar.getAmount();
 					}
-					else if(SIZE[i].equals("M")){
+					else if (ar.getSize().equals("M")){
 						tempSize[2]="M";
-						tempQTY[2]+=QUANTITY[i];
-						tempAmount[2]+=AMOUNT[i];
+						tempQTY[2]+=ar.getQty();
+						tempAmount[2]+=ar.getAmount();
 					}
-					else if(SIZE[i].equals("L")){
+					else if (ar.getSize().equals("L")){
 						tempSize[3]="L";
-						tempQTY[3]+=QUANTITY[i];
-						tempAmount[3]+=AMOUNT[i];
+						tempQTY[3]+=ar.getQty();
+						tempAmount[3]+=ar.getAmount();
 					}
-					else if(SIZE[i].equals("XL")){
+					else if (ar.getSize().equals("XL")){
 						tempSize[4]="XL";
-						tempQTY[4]+=QUANTITY[i];
-						tempAmount[4]+=AMOUNT[i];
+						tempQTY[4]+=ar.getQty();
+						tempAmount[4]+=ar.getAmount();
 					}
-					else if(SIZE[i].equals("XXL")){
+					else if (ar.getSize().equals("XXL")){
 						tempSize[5]="XXL";
-						tempQTY[5]+=QUANTITY[i];
-						tempAmount[5]+=AMOUNT[i];
+						tempQTY[5]+=ar.getQty();
+						tempAmount[5]+=ar.getAmount();
 					}
 				}
 		}
@@ -331,6 +304,8 @@ public class fashionShop{
 		
 		
 	}
+	
+	
 	public static void searchCustomer(){
 		do{
 			Scanner input = new Scanner(System.in);
@@ -346,36 +321,40 @@ public class fashionShop{
 
 			System.out.print("\t\tEnter Customer Phone Number : ");
 			String phoneNumber = input.next();
-			int index = searchPhoneNumber(phoneNumber);
-			
-			if (index>-1){
-				getSearchCustomerDetails(phoneNumber);
-			}else{
-				System.out.println("\t\t\tInvalid Input......");	
-				System.out.print("\t\tDo you want search another customer? (y/n):");
-				char option = input.next().charAt(0);
-				if (option=='y'|| option=='Y'){
-					clearConsole();
-					continue;
-				}else{
-					clearConsole();
-					home();
+			 
+			for (int i = 0; i < orders.length; i++){
+					Order b1 = orders[i];
+					boolean itsValue = b1.searchPhoneNumber(phoneNumber);
+				if (itsValue==true){
+					getSearchCustomerDetails(phoneNumber);
+					System.out.print("\t\tDo you want search another customer? (y/n):");
+					char option = input.next().charAt(0);
+					if (option=='y'|| option=='Y'){
+						clearConsole();
+						searchCustomer();
+					}else{
+						clearConsole();
+						home();
 					}
+				}else{
+					System.out.println("\t\t\tInvalid Input......");	
+					System.out.print("\t\tDo you want search another customer? (y/n):");
+					char option = input.next().charAt(0);
+					if (option=='y'|| option=='Y'){
+						clearConsole();
+						continue;
+					}else{
+						clearConsole();
+						home();
+						}
+				}
 			}
-		}while(true);
 		
+		}while(true);
 		
 	}
 	
-	public static int searchOrderId(String id){
-		for (int i = 0; i <ID.length ; i++){
-			if(ID[i].equalsIgnoreCase(id)){
-				return i;
-			}
-		}
-		
-		return -1;
-	}
+	
 	public static void searchOrder(){
 		do{
 			
@@ -392,46 +371,51 @@ public class fashionShop{
 
 		System.out.print("\t\tEnter order ID : ");
 		String id = input.next();
-		
-		int idIndex = searchOrderId(id);
-		if(idIndex<0){
-			System.out.println("\t\t\tInvalid input....");
-			System.out.print("\t\tDo you want to search anothr order? (y/n) :");
-			char yesorno = input.next().charAt(0);
-						if(yesorno=='y'|| yesorno=='Y' ){
-							clearConsole();
-							searchOrder();
-							
-						}else{
-							clearConsole();
-							home();
-						}
-		}else{
-			
-			System.out.println("\n\t\tPhone Number :"+PHONENUMBER[idIndex]);
-			System.out.println("\t\tSize :"+SIZE[idIndex]);
-			System.out.println("\t\tQTY :"+QUANTITY[idIndex]);
-			System.out.println("\t\tAmount :"+AMOUNT[idIndex]);
-			if(STATUS[idIndex] == 0){
-				System.out.println("\t\tStatus : Processing");
-			}else if(STATUS[idIndex] == 1){
-				System.out.println("Status : Delivering");
-			}else{
-				System.out.println("Status : Delivered");
-			}
+			for (int i = 0; i < orders.length; i++){
+				Order idIndex = orders[i];
+				boolean itValue = idIndex.searchOrderId(id);
+				
+				if(itValue==false){
+				System.out.println("\t\t\tInvalid input....");
+				System.out.print("\t\tDo you want to search anothr order? (y/n) :");
+				char yesorno = input.next().charAt(0);
+							if(yesorno=='y'|| yesorno=='Y' ){
+								clearConsole();
+								searchOrder();
+								
+							}else{
+								clearConsole();
+								home();
+							}
+				}else{
+				
+					System.out.println("\n\t\tPhone Number :"+idIndex.grtPhoneNumber());
+					System.out.println("\t\tSize :"+idIndex.getSize());
+					System.out.println("\t\tQTY :"+idIndex.getQty());
+					System.out.println("\t\tAmount :"+idIndex.getAmount());
+					if(idIndex.getStatus() == PROCESSING){
+						System.out.println("\t\tStatus : Processing");
+					}else if(idIndex.getStatus() == DELIVERING){
+						System.out.println("Status : Delivering");
+					}else{
+						System.out.println("Status : Delivered");
+					}
 
-			System.out.print("\t\tDo you want to search anothr order? (y/n) :");
-			char yesornO = input.next().charAt(0);
-						if(yesornO=='y'|| yesornO=='Y' ){
-							clearConsole();
-							searchOrder();
-							
-						}else{
-							home();
-						}
+					System.out.print("\t\tDo you want to search anothr order? (y/n) :");
+					char yesornO = input.next().charAt(0);
+								if(yesornO=='y'|| yesornO=='Y' ){
+									clearConsole();
+									searchOrder();
+									
+								}else{
+									clearConsole();
+									home();
+								}
+				}
 			}
-		} while (true);
 		
+		
+		} while (true);
 		
 	}
 	
@@ -445,18 +429,19 @@ public class fashionShop{
 		System.out.println("\t\t\t |____/ \\___||___/\\__| |_____|_| |_|  \\_____\\__,_|___/\\__\\___/|_| |_| |_|\\___|_|  |___/");
 		System.out.println("\t\t\t====================================================================================\n\n");                                                                                       
                                                                                        
-
+	Scanner input = new Scanner(System.in);
 		
     int[] tempQTY = new int[0];
     double[] tempAmount = new double[0];
     String[] tempPhoneNumber = new String[0];
     
-    for (int i = 0; i < PHONENUMBER.length; i++){
+    for (int i = 0; i < orders.length; i++){
+		Order ar = orders[i];
         boolean exists = false;
         for (int k = 0; k < tempPhoneNumber.length; k++) {
-            if (PHONENUMBER[i].equals(tempPhoneNumber[k])) {
-                tempQTY[k] += QUANTITY[i];
-                tempAmount[k] += AMOUNT[i];
+            if (ar.searchPhoneNumber(tempPhoneNumber[k])) {
+                tempQTY[k] += ar.getQty();
+                tempAmount[k] += ar.getAmount();
                 exists = true;
                 break;
             }
@@ -477,9 +462,9 @@ public class fashionShop{
             tempAmount = tempAmountOne;
             tempPhoneNumber = tempPhoneNumberOne;
             
-            tempQTY[tempQTY.length - 1] = QUANTITY[i];
-            tempAmount[tempAmount.length - 1] = AMOUNT[i];
-            tempPhoneNumber[tempPhoneNumber.length - 1] = PHONENUMBER[i];
+            tempQTY[tempQTY.length - 1] = ar.getQty();
+            tempAmount[tempAmount.length - 1] = ar.getAmount();
+            tempPhoneNumber[tempPhoneNumber.length - 1] = ar.grtPhoneNumber();
         }
     }
 
@@ -520,9 +505,15 @@ public class fashionShop{
         System.out.printf("\t\t\t\t|%15s|%10d|%20.2f|%n", center(tempPhoneNumberArraySort[l], 15), tempQTYArraySort[l], tempAmountArraySort[l]);
     }
 		System.out.println("\t\t\t\t+---------------+----------+-------------------+");
+		System.out.print("To access the main Menu, pleaSe enter 0 :");
+		char zero = input.next().charAt(0);
+		while (zero == '0'){
+			clearConsole();
+				home();
+		}
+		clearConsole();	
 }
-	public static void allOrders(){
-		
+public static void allOrders(){
 		
 		System.out.println("\t\t\t           _ _    ____          _               ");
 		System.out.println("\t\t\t     /\\   | | |  / __ \\        | |              ");
@@ -534,46 +525,21 @@ public class fashionShop{
                                                 
 
 		Scanner input = new Scanner(System.in);
-		int[] tempQTYArraySort = new int[QUANTITY.length];
-		double[] tempAmountArraySort = new double[AMOUNT.length];
-		String[] tempSizeArraySort = new String[SIZE.length];
-		String[] tempIdArraySort = new String[ID.length];
-		String[] tempPhoneNumberArraySort = new String[PHONENUMBER.length];
+		int[] tempQTYArraySort = new int[orders.length];
+		double[] tempAmountArraySort = new double[orders.length];
+		String[] tempSizeArraySort = new String[orders.length];
+		String[] tempIdArraySort = new String[orders.length];
+		String[] tempPhoneNumberArraySort = new String[orders.length];
 		
-		for (int i = 0; i < tempQTYArraySort.length; i++){
-			tempQTYArraySort[i] = QUANTITY[i];
-			tempAmountArraySort[i] = AMOUNT[i];
-			tempSizeArraySort[i] = SIZE[i];
-			tempIdArraySort[i] = ID[i];
-			tempPhoneNumberArraySort[i] = PHONENUMBER[i];
+		for (int i = 0; i < orders.length; i++){
+			Order ar = orders[i];
+			tempQTYArraySort[i] = ar.getQty();
+			tempAmountArraySort[i] = ar.getAmount();
+			tempSizeArraySort[i] = ar.getSize();
+			tempIdArraySort[i] = ar.getId();
+			tempPhoneNumberArraySort[i] = ar.grtPhoneNumber();
 		}
 		
-		for (int i = 0; i < ID.length - 1; i++) {
-			for (int j = 0; j < ID.length - 1 - i; j++) {
-				if (ID[j].compareTo(ID[j + 1]) < 0) {
-					
-					double tempAmounts = tempAmountArraySort[j];
-					tempAmountArraySort[j] = tempAmountArraySort[j + 1];
-					tempAmountArraySort[j + 1] = tempAmounts;
-
-					int tempQty = tempQTYArraySort[j];
-					tempQTYArraySort[j] = tempQTYArraySort[j + 1];
-					tempQTYArraySort[j + 1] = tempQty;
-
-					String tempSizes = tempSizeArraySort[j];
-					tempSizeArraySort[j] = tempSizeArraySort[j + 1];
-					tempSizeArraySort[j + 1] = tempSizes;
-					
-					String tempId = tempIdArraySort[j];
-					tempIdArraySort[j] = tempIdArraySort[j + 1];
-					tempIdArraySort[j + 1] = tempId;
-					
-					String tempPhoneNumber = tempPhoneNumberArraySort[j];
-					tempPhoneNumberArraySort[j] = tempPhoneNumberArraySort[j + 1];
-					tempPhoneNumberArraySort[j + 1] = tempPhoneNumber;
-				}
-			}
-		}
 		System.out.println("\t\t\t\t+----------+---------------+----------+-----------+-------------------+");
 		System.out.printf("\t\t\t\t|%10s|%15s|%10s|%10s|%20s|%n", center("Order ID", 10),center("Customer ID", 15),center("Size", 10), center("QTY", 10), center("Amount", 20));
 		System.out.println("\t\t\t\t+----------+---------------+----------+-----------+-------------------+");
@@ -585,13 +551,11 @@ public class fashionShop{
 		System.out.println("\t\t\t\t+----------+---------------+----------+-----------+-------------------+\n");
 		System.out.print("To access the main Menu, pleaSe enter 0 :");
 		char zero = input.next().charAt(0);
-		while (zero == '0')
-		{
+		while (zero == '0'){
 			clearConsole();
 				home();
 		}
-		
-		
+		clearConsole();	
 	}
 		
 	public static void viewReport(){
@@ -640,88 +604,116 @@ public class fashionShop{
 				System.out.println("\t\t\t====================================================================================\n\n");
 				
 				Scanner input = new Scanner(System.in);
-				System.out.print("\nEnter Orde Id : ");
+				System.out.print("\t\t\tEnter Orde Id : ");
 				String orderId  = input.next();
 
-				int index = searchOrderId(orderId);
-				
-				if(index == -1){
-				System.out.println("\nInvalid Id...");
-				}else{
-				
-				System.out.println("\t\tPhone Number :"+PHONENUMBER[index]);
-				System.out.println("\t\tSize :"+SIZE[index]);
-				System.out.println("\t\tQTY :"+QUANTITY[index]);
-				System.out.println("\t\tAmount :"+AMOUNT[index]);
-				System.out.println("\t\tAmount :"+STATUS[index]);
-				
-				System.out.print("\nDo you want to change this order status? (y/n) : ");
-				char ch = input.next().charAt(0);
-				if(ch == 'y' || ch == 'Y'){
-					if (STATUS[index]==0){
-						System.out.println("\n\t[1]Order Delivering ");
-						System.out.println("\n\t[2]Order Deliverd ");	
-						System.out.print("\n\tEnter option : ");
-						int option = input.nextInt();
-						if(option==1){
-							STATUS[index]=1;
+				int index = -1;
+				L1:for (int i = 0; i < orders.length; i++){
+						Order ar = orders[i];
+						boolean itsValue = ar.searchOrderId(orderId);
+						if (itsValue==true){
+							index = i;
+						}else{
+							continue L1;
 						}
-						else if(option==2){
-							STATUS[index]=1;
-						}
-					}else if(STATUS[index]==2){
-						System.out.println("\n\t[1]Order Deliverd ");
-						System.out.print("\n\tEnter option : ");
-						int option = input.nextInt();
-						if(option==1){
-							STATUS[index]=2;
-						}
-					}
-					
-					
-				}else if(ch == 'n' || ch=='N'){
-
-				}
-			}	
 				
-			} while (true);
+						if(index<0){
+						System.out.println("\nInvalid Id...");
+						}else{
+						
+								System.out.println("\t\tPhone Number :"+ar.grtPhoneNumber());
+								System.out.println("\t\tSize :"+ar.getSize());
+								System.out.println("\t\tQTY :"+ar.getQty());
+								System.out.println("\t\tAmount :"+ar.getAmount());
+								if(ar.getStatus() == PROCESSING){
+									System.out.println("\t\tStatus : Processing");
+								}else if(ar.getStatus() == DELIVERING){
+									System.out.println("Status : Delivering");
+								}else{
+									System.out.println("Status : Delivered");
+								}
+								 int statusValue = ar.getStatus();
+								 if (statusValue==DELIVERED){
+									 System.out.print("\n\t\t\tCan't change this order status, Order already delivered...!");
+									 System.out.print("\n\t\t\tDo you want to change this order status? (y/n) : ");
+									 char ch = input.next().charAt(0);
+										if(ch == 'y' || ch == 'Y'){
+											if (ar.getStatus()==0){
+												System.out.println("\n\t[1]Order Delivering ");
+												System.out.println("\n\t[2]Order Deliverd ");	
+												System.out.print("\n\tEnter option : ");
+												int option = input.nextInt();
+												if(option==1){
+													ar.setOrderStatus(DELIVERING);
+												}
+												else if(option==2){
+													ar.setOrderStatus(DELIVERED);
+												}
+											}else if(ar.getStatus()==1){
+												System.out.println("\n\t[1]Order Deliverd ");
+												System.out.print("\n\tEnter option : ");
+												int option = input.nextInt();
+												if(option==1){
+													ar.setOrderStatus(DELIVERED);
+												}
+											}
+									
+											clearConsole();
+											home();
+										}else if(ch == 'n' || ch=='N'){
+											clearConsole();
+											home();
+										}
+								 }
+								 else{
+									System.out.print("\nDo you want to change this order status? (y/n) : ");
+									char ch = input.next().charAt(0);
+										if(ch == 'y' || ch == 'Y'){
+											if (ar.getStatus()==0){
+												System.out.println("\n\t[1]Order Delivering ");
+												System.out.println("\n\t[2]Order Deliverd ");	
+												System.out.print("\n\tEnter option : ");
+												int option = input.nextInt();
+												if(option==1){
+													ar.setOrderStatus(DELIVERING);
+												}
+												else if(option==2){
+													ar.setOrderStatus(DELIVERED);
+												}
+											}else if(ar.getStatus()==1){
+												System.out.println("\n\t[1]Order Deliverd ");
+												System.out.print("\n\tEnter option : ");
+												int option = input.nextInt();
+												if(option==1){
+													ar.setOrderStatus(DELIVERED);
+												}
+											}
+									
+											clearConsole();
+											home();
+										}else if(ch == 'n' || ch=='N'){
+											clearConsole();
+											home();
+										}
+								}
+					}		
+				}	
+			}while (true);
 			
 	}
-		
+	
 	public static void remove(int index){
-			String[] tempOrderIdArray = new String[ID.length-1]; 
-			String[] tempPhoneNumberArray = new String[PHONENUMBER.length-1]; 
-			String[] tempSizeArray = new String[SIZE.length-1]; 
-			int[] tempQtyArray = new int[QUANTITY.length-1]; 
-			double[] tempAmountArray = new double[AMOUNT.length-1]; 
-			int[] tempStatusArray = new int[STATUS.length-1]; 
-
-		for(int i = index; i< ID.length-1; i++){
-			ID[i] =ID[i+1];
-			PHONENUMBER[i] =PHONENUMBER[i+1];
-			SIZE[i] =SIZE[i+1];
-			QUANTITY[i] =QUANTITY[i+1];
-			AMOUNT[i] =AMOUNT[i+1];
-			STATUS[i] =STATUS[i+1];
+			Order[] tempOrderOrder = new Order[orders.length-1]; 
+			
+		for(int i = index; i< orders.length-1; i++){
+			orders[i] =orders[i+1];	
 		}
-		for(int i = 0; i< ID.length-1; i++){
-			tempOrderIdArray[i] = ID[i];
-			tempPhoneNumberArray[i] = PHONENUMBER[i];
-			tempSizeArray[i] = SIZE[i];
-			tempQtyArray[i] = QUANTITY[i];
-			tempAmountArray[i] = AMOUNT[i];
-			tempStatusArray[i] = STATUS[i];
+		for(int i = 0; i< orders.length-1; i++){
+			tempOrderOrder[i] = orders[i];	
 		}
-		ID = tempOrderIdArray;
-		PHONENUMBER = tempPhoneNumberArray;
-		SIZE = tempSizeArray;
-		QUANTITY = tempQtyArray;
-		AMOUNT = tempAmountArray;
-		STATUS = tempStatusArray;
+		orders = tempOrderOrder;
 	}
 
-
-	
 	public static void deleteOrder(){
 		do{
 			
@@ -735,29 +727,44 @@ public class fashionShop{
 			System.out.println("\t\t\t====================================================================================\n\n");                                                          
 			
 			Scanner input = new Scanner(System.in);
-			System.out.print("\nEnter Orde Id : ");
+			System.out.print("\n\t\t\tEnter Orde Id : ");
 			String orderId  = input.next();
-
-			int index = searchOrderId(orderId);
-
-			if(index == -1){
+			int index = -1;
+				L1:for (int i = 0; i < orders.length; i++){
+					Order ar = orders[i];
+					boolean itsValue = ar.searchOrderId(orderId);
+					if (itsValue==true)
+					{
+						index = i;
+					}else{
+						continue L1;
+					}
+			if(index<0){
 				System.out.println("\nInvalid Id...");
 			}else{
-			System.out.println("\t\tPhone Number :"+PHONENUMBER[index]);
-			System.out.println("\t\tSize :"+SIZE[index]);
-			System.out.println("\t\tQTY :"+QUANTITY[index]);
-			System.out.println("\t\tAmount :"+AMOUNT[index]);
-			System.out.println("\t\tAmount :"+STATUS[index]);
-				System.out.println("\nDo you want to delete this order ? ");
+			System.out.println("\t\tPhone Number :"+ar.grtPhoneNumber());
+			System.out.println("\t\tSize :"+ar.getSize());
+			System.out.println("\t\tQTY :"+ar.getQty());
+			System.out.println("\t\tAmount :"+ar.getAmount());
+			if(ar.getStatus() == PROCESSING){
+				System.out.println("\t\tStatus : Processing");
+			}else if(ar.getStatus() == DELIVERING){
+				System.out.println("Status : Delivering");
+			}else{
+				System.out.println("Status : Delivered");
+			}
+			
+				System.out.print("\nDo you want to delete this order (y/n)? ");
 				char ch = input.next().charAt(0);
 				if(ch == 'y' || ch == 'Y'){
-					remove(index);	
+					remove(i);	
 					System.out.println("\n\tOrder Deleted !");
 				}else if(ch == 'n' || ch=='N'){
-
+					clearConsole();
+					home();
 				}
 			}
-			System.out.println("\nDo you want to delete another oreder ? ");
+			System.out.print("\nDo you want to delete another oreder (y/n)? ");
 			char op  = input.next().charAt(0);
 			if(op == 'y' || op == 'Y'){
 				clearConsole();
@@ -766,9 +773,9 @@ public class fashionShop{
 				clearConsole();
                 home();
 			}
+		}
 
 		}while(true);
 	}
-
-		
+	
 }
